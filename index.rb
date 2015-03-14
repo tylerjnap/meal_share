@@ -21,6 +21,21 @@ class MealShare < Sinatra::Base
    register Sinatra::ActiveRecordExtension
 end
 
+class Meal < ActiveRecord::Base
+   has_many :eaters, dependent: :destroy
+   has_many :dishes, dependent: :destroy
+end
+
+class Eater < ActiveRecord::Base
+   has_many :dishes, dependent: :destroy
+   belongs_to :meal
+end
+
+class Dish < ActiveRecord::Base
+   belongs_to :eaters
+   belongs_to :meal
+end
+
 #Initiate Twilio Client
 client = Twilio::REST::Client.new ENV['account_sid'], ENV['auth_token']
 
