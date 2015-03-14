@@ -17,6 +17,10 @@ Dotenv.load
 $numbers = ["0","1","2","3","4","5","6","7","8","9", "I", "?"]
 $decimals = [".", ":", " "]
 
+class MealShare < Sinatra::Base
+   register Sinatra::ActiveRecordExtension
+end
+
 #Initiate Twilio Client
 client = Twilio::REST::Client.new ENV['account_sid'], ENV['auth_token']
 
