@@ -15,6 +15,7 @@ gem 'sinatra-redirect-with-flash'
 gem 'rake'
 
 gem 'bcrypt-ruby'
+gem 'htmlentities'
 
 group :development do
    gem 'debugger'
