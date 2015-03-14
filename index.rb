@@ -61,7 +61,7 @@ def analyze_receipt_text(string)
          end
          puts "#{number_counter}: #{decimal_counter}"
          ##weed out prices that woudln't make sense by number of digits and number of decimal points
-         if number_counter >= 2 && decimal_counter != 0
+         if number_counter >= 3 && decimal_counter != 0 #maybe make 2 for .99 instead of 0.99
             price = price_array.reverse.join #create price
             item = line[0...index] #create item
             item_and_price = {item: item, price: price} #create hash of item and price
