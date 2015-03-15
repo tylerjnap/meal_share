@@ -28,3 +28,24 @@ g:Hamburger:7.50
 e:delete
 After sending all of you corrections, send an OK to this number.
 "
+$send_eaters_string = "\n
+Thank you for the corrections.
+
+Please send the names of peole you are dining with.  If there are multiple people, add them on a new line.  Here is an example:\n\n
+Bob
+Henry
+Amanda
+Stephanie
+"
+
+$send_eaters_breakdown_string = "\n
+Your friends have been added.
+
+Time to figure out who ate what.  Write the name of your friend, followed by a colon, followed by the letter key of what they ate, seperated by commas.  If there is more than one person dining, place them on a new line.  Here is an example:\n\n
+
+Bob:a,e,g
+Henry:s,b,c
+Amanda:y,o,z,k
+Stephanie:i,p
+
+"

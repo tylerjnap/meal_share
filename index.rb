@@ -12,9 +12,13 @@ require 'sinatra/activerecord'
 require 'bcrypt'
 require 'htmlentities'
 
+#text flow files
 require './text_flow/receive_receipt_and_send_breakdown.rb'
+require './text_flow/correct_breakdown.rb'
+require './text_flow/add_eaters.rb'
+require './text_flow/who_ate_what.rb'
 
-set :port, 8085
+set :port, 8086
 Dotenv.load
 
 require './variables.rb'
@@ -49,19 +53,34 @@ post "/" do
       received_receipt_and_send_breakdown(params)
    else
       if meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-         if params["Body"].downcase != "ok"
-            #implement corrections
-            correct_breakdown(params["Body"], meal)
-         else
+         if params["Body"].downcase == "ok"
             #update database so next text will execute next text_flow
             meal.update_attributes(confirmed_breakdown: true)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $send_eaters_string) #send confirmation text and next steps for confirming people person is eating with
+         else
+            #implement corrections
+            correct_breakdown(params["Body"], meal)
          end
-      # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-      #
-      # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-      #
-      # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters == true && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-      #
+      elsif  meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown == true && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
+         if params["Body"].downcase == "ok"
+            #update database so next text will execute next text_flow
+            meal.update_attributes(received_names_of_eaters: true)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $send_eaters_breakdown_string) #send confirmation text and next steps for confirming people person is eating with
+         else
+            #add eaters
+            add_eaters(params["Body"], meal)
+         end
+      elsif  meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown == true && meal.received_names_of_eaters == true && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
+         if params["Body"].downcase == "ok"
+            #update database so next text will execute next text_flow
+            meal.update_attributes(received_all_eaters_dishes: true)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: "all works fine!") #send confirmation text and next steps for confirming people person is eating with
+         else
+            #add eaters
+            who_ate_what(params["Body"], meal)
+         end
+      elsif  meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown == true && meal.received_names_of_eaters == true && meal.received_all_eaters_dishes == true && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
+
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters == true && meal.received_all_eaters_dishes == true && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
       #
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters == true && meal.received_all_eaters_dishes == true && meal.confirmed_all_dishes == true && meal.sent_total.nil?
@@ -71,6 +90,12 @@ post "/" do
       end
    end
 end
+
+# Bob:a,e,g
+# Henry:s,b,c
+# Amanda:y,o,z,k
+# Stephanie:i,p
+
 
 #key functions
 def format_items_for_text (meal)
