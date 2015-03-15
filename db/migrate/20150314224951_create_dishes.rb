@@ -5,6 +5,7 @@ class CreateDishes < ActiveRecord::Migration
         t.integer :eater_id
         t.string :item
         t.string :price
+        t.string :bin_key
      end
   end
 end

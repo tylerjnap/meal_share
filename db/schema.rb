@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20150314224951) do
     t.integer "eater_id"
     t.string  "item"
     t.string  "price"
+    t.string  "bin_key"
   end
 
   create_table "eaters", force: :cascade do |t|
