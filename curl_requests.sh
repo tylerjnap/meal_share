@@ -5,3 +5,4 @@ curl -s -X POST http://6bc875e0.ngrok.com -H 'Content-Type: application/json' -d
 curl -s -X POST http://6bc875e0.ngrok.com -H 'Content-Type: application/json' -d '{"Body": "Bloody Mary:4.00\nh:4.00\nc:delete", "From": "+15169671237", "To":"+15164505983"}'
 
 curl -s -X POST http://6bc875e0.ngrok.com -H 'Content-Type: application/json' -d '{"Body": "More stuff:19.00\nOtherstuff:100.00", "From": "+15169671237", "To":"+15164505983"}'
+curl -s -X POST http://6bc875e0.ngrok.com -H 'Content-Type: application/json' -d '{"Body": "ok", "From": "+15169671237", "To":"+15164505983"}'

@@ -49,7 +49,13 @@ post "/" do
       received_receipt_and_send_breakdown(params)
    else
       if meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-         correct_breakdown(params["Body"], meal)
+         if params["Body"].downcase != "ok"
+            #implement corrections
+            correct_breakdown(params["Body"], meal)
+         else
+            #update database so next text will execute next text_flow
+            meal.update_attributes(confirmed_breakdown: true)
+         end
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
       #
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
