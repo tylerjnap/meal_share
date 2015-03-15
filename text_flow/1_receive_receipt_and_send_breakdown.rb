@@ -65,3 +65,12 @@ def analyze_receipt_text(string)
    end
    return all_items_and_prices
 end
+
+def format_items_for_text (meal)
+   string = "Thanks for using our service.  Here is the breakdown for who owes what:\n\n"
+   dishes = meal.dishes
+   dishes.each do |dish|
+      string << "\n#{dish.bin_key} : #{dish.item} : $#{dish.price}"
+   end
+   return string
+end
