@@ -1,3 +1,13 @@
+def received_receipt_and_send_breakdown params
+   response = HTTParty.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=#{URI.encode(params["MediaUrl0"])}&apikey=81b77cb6-88ce-42ec-bea0-eca4c98405c6")
+   string = HTMLEntities.new.decode(response.parsed_response["text_block"].first["text"])
+   items = analyze_receipt_text(string)
+   meal = save_initial_meal_instance(params['From'], items)
+   items_string = format_items_for_text(meal)
+   $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: items_string) ## send items
+   $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $correct_breakdown_string)
+end
+
 def save_initial_meal_instance phone_number, items
    meal = Meal.create({phone_number: phone_number, sent_breakdown: true})
    items.each do |item|

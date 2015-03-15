@@ -16,32 +16,8 @@ require './text_flow/receive_receipt_and_send_breakdown.rb'
 
 set :port, 8085
 Dotenv.load
-$numbers = ["0","1","2","3","4","5","6","7","8","9", "I", "?"]
-$decimals = [".", ":", " "]
-$letters = ('a'..'zz').to_a
-$app_phone_number = "+15164505983"
-$correct_breakdown_string = "\n
-Here is the breakdown of your meal.\n\n
-#######\n
-If you would like to add a missing item, text the name of item, followed by a colon, followed by the price of the item.  If there is more than one missing items, place each missing item on a new line.  Here is an example:\n\n
-Pasta:10.00\n\n
-#######\n
-If you would like to correct an item's price, type it's letter assignment, followed by colon, followed by it's correct price.  Here is an example:\n\n
-a:6.00\n\n
-#######\n
-If you would like to correct an item's name, type it's letter assignment, followed by colon, followed by it's correct name.  Here is an example:\n\n
-a:Meatloaf\n\n
-#######\n
-If you would like to correct BOTH an item's price and name, type it's letter assignment, followed by colon, followed by it's correct name, followed by a colon, followed by it's correct price.  Here is an example:\n\n
-a:Coffee:6.00\n\n
-#######\n
-If there are multiple entries to correct, place the next item on a new line:\n\n
-Steak:20.00\n
-g:7.50\n
-a:Ice Cream\n
-g:Hamburger:7.50\n
-After sending all of you corrections, send an OK to this number.
-"
+
+require './variables.rb'
 
 class MealShare < Sinatra::Base
    register Sinatra::ActiveRecordExtension
@@ -68,12 +44,12 @@ $client = Twilio::REST::Client.new ENV['account_sid'], ENV['auth_token']
 post "/" do
    params = JSON.parse(request.body.read) #if using curl
    puts "Text received from #{params['From']}"
-   meal = Meal.where(params['From'])
-   if meal.empty?
+   meal = Meal.find_by_phone_number(params['From'])
+   if meal.nil?
       received_receipt_and_send_breakdown(params)
    else
       if meal.sent_breakdown == true && meal.corrected_breakdown.nil? && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
-         correct_breakdown(params)
+         correct_breakdown(params["Body"], meal)
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown.nil? && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
       #
       # elsif  meal.sent_breakdown == true && meal.corrected_breakdown == true && meal.confirmed_breakdown == true && meal.received_names_of_eaters.nil? && meal.received_all_eaters_dishes.nil? && meal.confirmed_all_dishes.nil? && meal.sent_total.nil?
@@ -88,20 +64,32 @@ post "/" do
 
       end
    end
-   debugger
-   debugger
 end
 
-def received_receipt_and_send_breakdown params
-   response = HTTParty.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=#{URI.encode(params["MediaUrl0"])}&apikey=81b77cb6-88ce-42ec-bea0-eca4c98405c6")
-   string = HTMLEntities.new.decode(response.parsed_response["text_block"].first["text"])
-   items = analyze_receipt_text(string)
-   meal = save_initial_meal_instance(params['From'], items)
-   items_string = format_items_for_text(meal)
-   $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: items_string) ## send items
-   $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $correct_breakdown_string)
+def correct_breakdown(body, meal)
+   body.split("\n").each do |line|
+      vals = line.split(":")
+      dish = meal.dishes.find_by_bin_key(vals.first)
+      if dish.nil?
+         #add new item
+      else
+         #correct item
+         if vals.length == 3
+            #correct everything
+         else
+            #correct only name or price
+            if $letters.include?(vals.last.split("").first.downcase) #check first character of second (last) entry
+               #correct the name
+            else
+               #correct the price
+            end
+         end
+      end
+   end
 end
 
+
+#key functions
 def format_items_for_text (meal)
    string = ""
    dishes = meal.dishes
