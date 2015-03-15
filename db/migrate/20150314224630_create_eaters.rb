@@ -3,6 +3,7 @@ class CreateEaters < ActiveRecord::Migration
      create_table :eaters do |t|
         t.string :name
         t.integer :meal_id
+        t.boolean :confirmed_meal
      end
   end
 end

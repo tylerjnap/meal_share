@@ -23,10 +23,18 @@ ActiveRecord::Schema.define(version: 20150314224951) do
   create_table "eaters", force: :cascade do |t|
     t.string  "name"
     t.integer "meal_id"
+    t.boolean "confirmed_meal"
   end
 
   create_table "meals", force: :cascade do |t|
-    t.string "phone_number"
+    t.string  "phone_number"
+    t.boolean "sent_breakdown"
+    t.boolean "corrected_breakdown"
+    t.boolean "confirmed_breakdown"
+    t.boolean "received_names_of_eaters"
+    t.boolean "received_all_eaters_dishes"
+    t.boolean "confirmed_all_dishes"
+    t.boolean "sent_total"
   end
 
 end
