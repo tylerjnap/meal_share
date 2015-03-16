@@ -50,8 +50,6 @@ get "/" do
 end
 
 post "/signup" do
-   debugger
-   debugger
    $client.messages.create(from: $app_phone_number, to: params[:phone_number], body: $signup_string, media_url: $test_image_url)
    redirect to("/")
 end
