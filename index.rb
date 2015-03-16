@@ -45,7 +45,16 @@ end
 #Initiate Twilio Client
 $client = Twilio::REST::Client.new ENV['account_sid'], ENV['auth_token']
 
-post "/" do
+get "/" do
+   erb :index
+end
+
+post "/signup" do
+   $client.messages.create(from: $app_phone_number, to: params[:phone_number], body: $signup_string, media_url: $test_image_url)
+   redirect to("/")
+end
+
+post "/text_processor" do
    params = JSON.parse(request.body.read) #if using curl
    puts "Text received from #{params['From']}"
    meal = Meal.find_by_phone_number(params['From'])
