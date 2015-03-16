@@ -32,7 +32,7 @@ After sending all of you corrections, send an OK to this number.
 $send_eaters_string = "\n
 Thank you for the corrections.
 
-Please send the names of peole you are dining with.  If there are multiple people, add them on a new line.  Here is an example:\n\n
+Please send the names of people you are dining with.  If there are multiple people, add them on a new line.  Here is an example:\n\n
 Bob
 Henry
 Amanda
@@ -50,3 +50,4 @@ Amanda:y,o,z,k
 Stephanie:i,p
 
 "
+$finished_corrections ="If you're all finished with your corrections, send an 'OK' to us"

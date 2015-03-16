@@ -4,7 +4,11 @@ def received_receipt_and_send_breakdown params
    items = analyze_receipt_text(string)
    meal = save_initial_meal_instance(params['From'], items)
    items_string = format_items_for_text(meal)
+   debugger
+   debugger
    $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: items_string) ## send items
+   debugger
+   debugger
    $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $correct_breakdown_string)
 end
 
@@ -17,8 +21,6 @@ def save_initial_meal_instance phone_number, items
 end
 
 def analyze_receipt_text(string)
-   debugger
-   debugger
    all_items_and_prices = []
    letters_index = 0
    string.split("\n").each do |line|
@@ -49,7 +51,6 @@ def analyze_receipt_text(string)
             price_array << chars[index]
             index -= 1
          end
-         puts "#{number_counter}: #{decimal_counter}"
          ##weed out prices that woudln't make sense by number of digits and number of decimal points
          if number_counter >= 3 && decimal_counter != 0 #maybe make 2 for .99 instead of 0.99
             price = price_array.reverse.join #create price
