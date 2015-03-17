@@ -11,14 +11,14 @@ end
 
 def calculate_what_everyone_owes(meal)
    message_payload = []
-   eaters = Meal.eaters
+   eaters = meal.eaters
    eaters.each do |eater|
       before_t_a_t = 0
       eater.dishes.each do |dish|
          before_t_a_t += dish.price.to_f
       end
-      tax = before_t_a_t*0.085.round(2)
-      tip = (before_t_a_t+tax)*0.20.round(2)
+      tax = (before_t_a_t*0.085).round(2)
+      tip = ((before_t_a_t+tax)*0.20).round(2)
       total = before_t_a_t + tax + tip
       message_payload << {name: "#{eater.name}", before_t_a_t: before_t_a_t.to_s, tax: tax.to_s , tip: tip.to_s, total: total.to_s}
    end

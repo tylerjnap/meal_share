@@ -87,15 +87,11 @@ post "/text_processor" do
          if params["Body"].downcase == "ok"
             #update database so next text will execute next text_flow
             meal.update_attributes(received_names_of_eaters: true)
-            debugger
-            debugger
             $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $send_eaters_breakdown_string) #send confirmation text and next steps for telling who ate what
          else
             #add eaters
             add_eaters(params["Body"], meal)
-            debugger
-            debugger
-            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $finished_corrections)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: "If that's everyone, text 'OK', to us.")
          end
       ##/3#
       ##4##
@@ -105,16 +101,12 @@ post "/text_processor" do
             #update database so next text will execute next text_flow
             message_payload = calculate_what_everyone_owes(meal)
             string = format_string_who_owes_what_breakdown(message_payload)
-            debugger
-            debugger
             $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: string) #send confirmation text and next steps for confirming people person is eating with
             meal.destroy #delete meal instance from the database
          else
             #add who ate what meal
             who_ate_what(params["Body"], meal)
-            debugger
-            debugger
-            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $finished_corrections)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: "If that's what' everyone is having, text 'OK' to us.")
          end
       ##/4##
       end
