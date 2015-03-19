@@ -1,7 +1,7 @@
 def correct_breakdown(body, meal)
    body.split("\n").each do |line|
       vals = line.split(":")
-      dish = meal.dishes.find_by_bin_key(vals.first)
+      dish = meal.dishes.find_by_bin_key(vals.first.downcase)
       if dish.nil?
          #add new item
          meal.dishes.create!({bin_key: meal.dishes.last.bin_key.next, item: vals[0], price: vals[1]})

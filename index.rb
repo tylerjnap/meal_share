@@ -78,6 +78,8 @@ post "/text_processor" do
          else
             #implement corrections. Always go to this one until 'ok' is sent
             correct_breakdown(params["Body"], meal)
+            new_breakdown = format_bill(meal)
+            $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: new_breakdown)
             $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $finished_corrections)
          end
       ##/2##
@@ -110,4 +112,13 @@ post "/text_processor" do
       ##/4##
       end
    end
+end
+
+def format_bill meal
+   string = "Here is the updated bill:\n\n"
+   dishes = meal.dishes
+   dishes.each do |dish|
+      string << "\n#{dish.bin_key} : #{dish.item} : $#{dish.price}"
+   end
+   return string
 end
