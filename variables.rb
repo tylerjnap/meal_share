@@ -54,4 +54,6 @@ $finished_corrections ="If you're all finished with your corrections, send an 'O
 
 $signup_string = "Welcome!  Next time you go out to dinner, take a picture of the recipiet after you get the bill to figure out who owes what including the tip.\n\n----------\nTo get you started, we've sent you an example receipt to text back to us so you can test out the process."
 
-$test_image_url =  "https://s3.amazonaws.com/ornament/IMG_1281.jpeg"
+# $test_image_url =  "https://s3.amazonaws.com/ornament/IMG_1281.jpeg"
+
+$test_image_url = "https://s3.amazonaws.com/ornament/IMG_6021.jpg"
