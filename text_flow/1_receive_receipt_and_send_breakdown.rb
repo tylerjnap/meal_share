@@ -4,11 +4,7 @@ def received_receipt_and_send_breakdown params
    items = analyze_receipt_text(string)
    meal = save_initial_meal_instance(params['From'], items)
    items_string = format_items_for_text(meal)
-   debugger
-   debugger
    $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: items_string) ## send items
-   debugger
-   debugger
    $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $correct_breakdown_string)
 end
 
@@ -55,10 +51,8 @@ def analyze_receipt_text(string)
          if number_counter >= 3 && decimal_counter != 0 #maybe make 2 for .99 instead of 0.99
             price = price_array.reverse.join #create price
             item = line[0...index] #create item
-            # debugger
             item_and_price = {bin_key: $letters[letters_index], item: item, price: price} #create hash of item and price
             letters_index += 1 #increment next bin_key
-            # debugger
             all_items_and_prices << item_and_price #add this hash to array of all items and prices
          end
          ##

@@ -55,13 +55,16 @@ post "/signup" do
 end
 
 post "/text_processor" do
-   params = JSON.parse(request.body.read) #if using curl
+   # params = JSON.parse(request.body.read) #if using curl
    puts "Text received from #{params['From']}"
    meal = Meal.find_by_phone_number(params['From'])
    ##1##
    if meal.nil?
       #Meal hasn't been created yet.  Create one, analyze the text, and send back the breakdown to person with instructions on how correct the breakdown
       received_receipt_and_send_breakdown(params)
+   elsif !meal.nil? && params["Body"].downcase == "redo"
+      ##meal exists and want to redo it
+      meal.destroy
    else
    ##/1##
       #Meal has already been created
@@ -71,14 +74,10 @@ post "/text_processor" do
          if params["Body"].downcase == "ok"
             #update database so next text will execute next text_flow
             meal.update_attributes(confirmed_breakdown: true)
-            debugger
-            debugger
             $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $send_eaters_string) #send confirmation text and next steps for confirming people person is eating with
          else
             #implement corrections. Always go to this one until 'ok' is sent
             correct_breakdown(params["Body"], meal)
-            debugger
-            debugger
             $client.messages.create(from: $app_phone_number, to: meal.phone_number, body: $finished_corrections)
          end
       ##/2##
